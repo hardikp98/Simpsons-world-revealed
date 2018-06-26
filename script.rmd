@@ -15,13 +15,6 @@ provided by [William Cukierski](https://www.kaggle.com/wcukierski), containing i
 <img src="https://upload.wikimedia.org/wikipedia/en/0/0d/Simpsons_FamilyPicture.png" width=480/>
 
 
-
-
-```{r}
-install.packages("pbkrtest", dependencies = TRUE) 
-```
-
-
 #**Read the data**
 
 We include the R libraries used for data input, processing, analysis and visualization.
@@ -137,7 +130,76 @@ wordcloud(words = words$name, freq = words$freq, max.words = 313, random.order =
 title(paste0('Characters with gender:', nrow(words), '\n(red for female, blue for male)'), col.main = 'black', cex.main = 1.2)
 ```
 
+Let's see who are the most important characters in the show, counting the number of appearances in the shows. We will 
+
+count the number of times the character apears as speaker in the script lines.
+
+```{r fig.width=8, fig.height=4, character_who_speaks_most}
+script_lines_character_df <- merge(script_lines_df, characters_df, by.x = "character_id", by.y = "id")
+script_lines_character_df %>%
+  filter(name != "") %>%
+  group_by(name) %>%
+  summarise(nr = length(id)) %>%
+  top_n(10, nr) %>%
+  ungroup() %>%
+  ggplot(aes(x=reorder(name, nr), y = nr)) +
+  geom_bar(stat = "identity", aes(fill = reorder(name, nr)), color = "black") +
+  geom_text(aes(label = nr), position = position_dodge(width = 0.6)) +
+  coord_flip() +
+  guides(fill = FALSE) +
+  theme_bw(base_size = 10) +
+  labs(x = "Character", y = "Number of lines", title = "Simpsons characters importance", subtitle = "Which character speaks most (character lines)")
 ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
