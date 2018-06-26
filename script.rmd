@@ -12,8 +12,6 @@ output:
     highlight: tango
     code_folding: hide
 ---
-
-
 #**Introduction**
 
 
@@ -70,6 +68,8 @@ episodes_df <- read_csv("/Users/hardikpanchal/Downloads/Data/Projects/Simpsons/s
 locations_df <- read_csv("/Users/hardikpanchal/Downloads/Data/Projects/Simpsons/simpsons_locations.csv")
 script_lines_df <- read_csv("/Users/hardikpanchal/Downloads/Data/Projects/Simpsons/simpsons_script_lines.csv")
 ```
+
+
 #**Summary of the data**{.tabset .tabset-fade .tabset-pills}
 
 
@@ -185,7 +185,26 @@ script_lines_character_df %>%
 ```
   
   
-  
+  Character importance based on who speaks more shows as 4 most important characters `Homer Simpson`, `Marge Simpson`, 
+
+`Bart Simpson` and `Lisa Simpson`.
+
+
+
+Let's show again the main characters in the show (top 200 this time) using a wordcloud.
+
+```{r fig.width=10, fig.height=8, characters_list}
+script_lines_character_df %>%
+  filter(name != "") %>%
+  group_by(name) %>%
+  summarise(nr = length(id)) %>%
+  top_n(200, nr) %>%
+  ungroup() -> words
+par(mfrow = c(1, 1), bg = "white")
+wordcloud(words = words$name, freq = words$nr, scale = c(3, 0.8), random.order = F, colors = brewer.pal(8, "Dark2"), rot.per = 0, max.words = 200)
+title(paste0('Main characters in show - top 200'), col.main = 'black', cex.main = 1.2)
+```
+
   
   
   
