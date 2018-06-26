@@ -1,0 +1,143 @@
+#**Introduction**
+
+
+
+
+
+**The Simpsons** is an American animated sitcom depicting the life of the working class in US. Here we analyze
+
+the dataset [The Simpsons by the Data](https://www.kaggle.com/wcukierski/the-simpsons-by-the-data/), 
+
+provided by [William Cukierski](https://www.kaggle.com/wcukierski), containing information from  27 seasons of **The Simpsons did it** TV show.
+
+
+
+<img src="https://upload.wikimedia.org/wikipedia/en/0/0d/Simpsons_FamilyPicture.png" width=480/>
+
+
+
+
+```{r}
+install.packages("pbkrtest", dependencies = TRUE) 
+```
+
+
+#**Read the data**
+
+We include the R libraries used for data input, processing, analysis and visualization.
+
+
+
+```{r}
+library(corrplot)
+library(readr)
+library(knitr)
+library(kableExtra)
+library(formattable)
+library(dplyr)
+library(tm)
+library(tidyr)
+library(wordcloud)
+library(ggplot2)
+library(gridExtra)
+library(grid)
+library(leaflet)
+library(randomForest)
+library(lattice)
+library(lava)
+library(caret)
+options(knitr.table.format = "html") 
+```
+
+
+
+We read the files in the dataset.
+
+
+
+```{r,input_data, message=FALSE,warning=FALSE}
+characters_df <- read_csv('/Users/hardikpanchal/Downloads/Data/Projects/Simpsons/simpsons_characters.csv')
+episodes_df <- read_csv("/Users/hardikpanchal/Downloads/Data/Projects/Simpsons/simpsons_episodes.csv")
+locations_df <- read_csv("/Users/hardikpanchal/Downloads/Data/Projects/Simpsons/simpsons_locations.csv")
+script_lines_df <- read_csv("/Users/hardikpanchal/Downloads/Data/Projects/Simpsons/simpsons_script_lines.csv")
+```
+
+
+
+#**Summary of the data**{.tabset .tabset-fade .tabset-pills}
+
+
+Let's see the first few rows of each data file and also glimpse these data files.
+
+
+
+##Characters
+
+```{r glimpse_characters}
+knitr::kable(head(characters_df,10),caption="Characters information (first 10 rows)")
+characters_df
+```
+
+
+
+##Episodes
+
+```{r glimpse_episodes}
+knitr::kable(head(episodes_df,10),caption="Episodes information (first 10 rows)")
+episodes_df
+```
+
+
+
+##Locations
+
+```{r glimpse_locations}
+knitr::kable(head(locations_df,10),caption="Locations information (first 10 rows)")
+locations_df
+```
+
+
+
+##Script lines
+
+```{r glimpse_script_lines}
+knitr::kable(head(script_lines_df,10),caption="Script lines details (first 10 rows)")
+script_lines_df
+```
+
+Who are the characters
+
+```{r}
+characters_df %>%
+  group_by(gender) %>%
+  summarise(nr = length(name)) %>%
+  ungroup() %>%
+  ggplot(aes(x = gender, y = nr)) +
+  geom_bar(stat = "identity", aes(fill = gender), color = "black") +
+  geom_text(aes(label = nr), vjust = -0.2, position = position_dodge(width = 0.6)) +
+  scale_fill_manual(values = c("red", "lightblue", "grey")) +
+  theme_bw() + labs(x = "Gender", y = "Number of characters", fill = "Gender", title = "Simpsons characters gender", subtitle = "Data file: simpsons_characters.csv")
+```
+
+Only 70 characters have the gender f (female), 243 have the gender m (male), the rest of 5864 not being
+
+specified in the data file.
+
+Let’s show all characters with assigned gender using a wordcloud. Female characters will be shown with <font color = "red">red</font>,
+
+male characters will be shown with <font color = "blue">blue</font>
+
+```{r fig.width=10, fig.height=9,characters_gender_wordcloud}
+characters_df %>%
+  filter(gender!= "") %>%
+  select(name, gender) -> words
+words$freq = 1
+par(mfrow = c(1, 1), bg = "white")
+wordcloud(words = words$name, freq = words$freq, max.words = 313, random.order = F, rot.per = 0, scale = c(0.8, 0.8), ordered.colors = T, colors = brewer.pal(3, "Set1")[factor(words$gender)])
+title(paste0('Characters with gender:', nrow(words), '\n(red for female, blue for male)'), col.main = 'black', cex.main = 1.2)
+```
+
+```
+
+
+
