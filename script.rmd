@@ -176,35 +176,49 @@ Let’s see how the four main characters (Homer, Marge, Bart and Lisa) frequence
 
 We start with the frequence of apparition plotted vs. episode. We plot the number of lines and the number of words vs. episode.  
   
- ```{r fig.width=10, fig.height=7,character_who_appears_most,warning=FALSE}
+```{r fig.width=10, fig.height=7,character_who_appears_most,warning=FALSE}
 main_characters <- c("Homer Simpson", "Marge Simpson", "Bart Simpson", "Lisa Simpson")
 script_lines_character_df$word_count = as.numeric(script_lines_character_df$word_count)
-script_lines_character_df %>% 
-filter(name %in% main_characters) %>% 
-group_by(name,episode_id) %>%  
-summarise(nr = length(id)) %>% 
-ungroup() %>%
-ggplot(aes(x = episode_id, y = nr, color = name)) +
-geom_line() +
-theme_bw() +
-theme(legend.position = "right") +
-labs(x = "Episode", y = "Lines", color = "Character", title = "Character lines (per episode)", subtitles = "Four main characters") -> d1
+script_lines_character_df %>%
+  filter(name %in% main_characters) %>% 
+  group_by(name,episode_id) %>%  
+  summarise(nr = length(id)) %>% 
+  ungroup() %>%
+  ggplot(aes(x = episode_id, y = nr, color = name)) +
+  geom_line() +
+  theme_bw() +
+  theme(legend.position = "right") +
+  labs(x = "Episode", y = "Lines", color = "Character", title = "Character lines (per episode)",
+       subtitles = "Four main characters") -> d1
 script_lines_character_df[complete.cases(script_lines_character_df$word_count),] %>% 
-filter(name %in% main_chracters) %>%
-group_by(name, episode_id) %>%
-summarise(nr = sum(word_count)) %>%
-ungroup() %>%
-ggplot(aes(x = episode_id, y = nr, color = name)) +
-geom_line() +
-theme_bw() +
-theme(legend.position = "right") +
-labs(x = "Episode", y = "Words", color = "Character", title = "Character words(per episode)", subtitle = "Four main characters") -> d2
-grid.arrange(d1, d2, ncol = 1)
+  filter(name %in% main_characters) %>% group_by(name,episode_id) %>%  
+  summarise(nr = sum(word_count)) %>% ungroup() %>%
+  ggplot(aes(x = episode_id, y = nr, colour = name)) +  
+  geom_line() + theme_bw() + theme(legend.position="right") +
+  labs(x="Episode", y="Words", colour="Character", 
+       title="Character words (per episode)", subtitle="Four main characters") -> d2
+grid.arrange(d1,d2,ncol=1)
 ```
-  
-  
-  
-  
+
+Let's see now the frequency of apparition plotted vs. season. We plot the number of lines and the number of words vs. season for top 10 characters.
+```{r fig.width=10, fig.height=7,character_who_appears_most,warning=FALSE}
+main_characters <- c("Homer Simpson", "Marge Simpson", "Bart Simpson", "Lisa Simpson")
+script_lines_character_df$word_count = as.numeric(script_lines_character_df$word_count)
+script_lines_character_df %>% filter(name %in% main_characters) %>% group_by(name,episode_id) %>%  
+  summarise(nr = length(id)) %>% ungroup() %>%
+ggplot(aes(x = episode_id, y = nr, colour = name)) +  
+  geom_line() + theme_bw() + theme(legend.position="right") +
+  labs(x="Episode", y="Lines", colour="Character", 
+       title="Character lines (per episode)", subtitle="Four main characters") -> d1
+script_lines_character_df[complete.cases(script_lines_character_df$word_count),] %>% filter(name %in% main_characters) %>% group_by(name,episode_id) %>%  
+  summarise(nr = sum(word_count)) %>% ungroup() %>%
+ggplot(aes(x = episode_id, y = nr, colour = name)) +  
+  geom_line() + theme_bw() + theme(legend.position="right") +
+  labs(x="Episode", y="Words", colour="Character", 
+       title="Character words (per episode)", subtitle="Four main characters") -> d2
+grid.arrange(d1,d2,ncol=1)
+```
+
 
 
 
