@@ -72,29 +72,14 @@ script_lines_df <- read_csv("/Users/hardikpanchal/Downloads/Data/Projects/Simpso
 
 #**Summary of the data**{.tabset .tabset-fade .tabset-pills}
 
-
-
-
-
 We have 4 data files in Simpsons dataset, as following:
 
-
-
 * simpsons_characters.csv (`r nrow(characters_df)` rows, `r length(names(characters_df))` columns)  
-
 * simpsons_episodes.csv (`r nrow(episodes_df)` rows, `r length(names(episodes_df))` columns)  
-
 * simpsons_locations.csv (`r nrow(locations_df)` rows, `r length(names(locations_df))` columns)  
-
 * simpsons_script_lines.csv (`r nrow(script_lines_df)` rows, `r length(names(script_lines_df))` columns)  
 
-
-
-
-
 Let's see the first few rows of each data file and also glimpse these data files.
-
-
 
 ##Characters
 
@@ -103,16 +88,12 @@ knitr::kable(head(characters_df,10),caption="Characters information (first 10 ro
 glimpse(characters_df)
 ```
 
-
-
 ##Episodes
 
 ```{r glimpse_episodes}
 knitr::kable(head(episodes_df,10),caption="Episodes information (first 10 rows)")
 glimpse(episodes_df)
 ```
-
-
 
 ##Locations
 
@@ -121,15 +102,12 @@ knitr::kable(head(locations_df,10),caption="Locations information (first 10 rows
 glimpse(locations_df)
 ```
 
-
-
 ##Script lines
 
 ```{r glimpse_script_lines}
 knitr::kable(head(script_lines_df,10),caption="Script lines details (first 10 rows)")
 glimpse(script_lines_df)
 ```
-
 
 Who are the characters
 
@@ -145,13 +123,9 @@ characters_df %>%
   theme_bw() + labs(x = "Gender", y = "Number of characters", fill = "Gender", title = "Simpsons characters gender", subtitle = "Data file: simpsons_characters.csv")
 ```
 
-Only 70 characters have the gender f (female), 243 have the gender m (male), the rest of 5864 not being
+Only 70 characters have the gender f (female), 243 have the gender m (male), the rest of 5864 not being specified in the data file.
 
-specified in the data file.
-
-Let’s show all characters with assigned gender using a wordcloud. Female characters will be shown with <font color = "red">red</font>,
-
-male characters will be shown with <font color = "blue">blue</font>
+Let’s show all characters with assigned gender using a wordcloud. Female characters will be shown with <font color = "red">red</font>, male characters will be shown with <font color = "blue">blue</font>
 
 ```{r fig.width=10, fig.height=9,characters_gender_wordcloud}
 characters_df %>%
@@ -163,9 +137,7 @@ wordcloud(words = words$name, freq = words$freq, max.words = 313, random.order =
 title(paste0('Characters with gender:', nrow(words), '\n(red for female, blue for male)'), col.main = 'black', cex.main = 1.2)
 ```
 
-Let's see who are the most important characters in the show, counting the number of appearances in the shows. We will 
-
-count the number of times the character apears as speaker in the script lines.
+Let's see who are the most important characters in the show, counting the number of appearances in the shows. We will count the number of times the character apears as speaker in the script lines.
 
 ```{r fig.width=8, fig.height=4, character_who_speaks_most}
 script_lines_character_df <- merge(script_lines_df, characters_df, by.x = "character_id", by.y = "id")
@@ -184,8 +156,7 @@ script_lines_character_df %>%
   labs(x = "Character", y = "Number of lines", title = "Simpsons characters importance", subtitle = "Which character speaks most (character lines)")
 ```
   
-  
-  Character importance based on who speaks more shows as 4 most important characters `Homer Simpson`, `Marge Simpson`, `Bart Simpson` and `Lisa Simpson`.
+Character importance based on who speaks more shows as 4 most important characters `Homer Simpson`, `Marge Simpson`, `Bart Simpson` and `Lisa Simpson`.
 
 Let's show again the main characters in the show (top 200 this time) using a wordcloud.
 
@@ -201,10 +172,13 @@ wordcloud(words = words$name, freq = words$nr, scale = c(3, 0.8), random.order =
 title(paste0('Main characters in show - top 200'), col.main = 'black', cex.main = 1.2)
 ```
 
+Let’s see how the four main characters (Homer, Marge, Bart and Lisa) frequence of apparition evolved during the entire period when the show was aired. The frequence of aparition is based on lines in the script, not on number of scenes. A scene is defined by a continous set with the same location; during the scene, a character can have multiple lines, interwined with other characters lines, during a conversation at that location. Then, we show as well the number of words (aggregated per episode and per season) for a certain character.
+
+We start with the frequence of apparition plotted vs. episode. We plot the number of lines and the number of words vs. episode.  
   
-  
-  
-  
+ ```{r fig.width=10, fig.height=7,character_who_appears_most,warning=FALSE}
+main_characters <- c("Homer Simpson", "Marge Simpson", "Bart Simpson", "Lisa Simpson")
+script_lines_charcter_df$word_count = as.
   
   
   
