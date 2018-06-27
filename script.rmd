@@ -178,7 +178,29 @@ We start with the frequence of apparition plotted vs. episode. We plot the numbe
   
  ```{r fig.width=10, fig.height=7,character_who_appears_most,warning=FALSE}
 main_characters <- c("Homer Simpson", "Marge Simpson", "Bart Simpson", "Lisa Simpson")
-script_lines_charcter_df$word_count = as.
+script_lines_character_df$word_count = as.numeric(script_lines_character_df$word_count)
+script_lines_character_df %>% 
+filter(name %in% main_characters) %>% 
+group_by(name,episode_id) %>%  
+summarise(nr = length(id)) %>% 
+ungroup() %>%
+ggplot(aes(x = episode_id, y = nr, color = name)) +
+geom_line() +
+theme_bw() +
+theme(legend.position = "right") +
+labs(x = "Episode", y = "Lines", color = "Character", title = "Character lines (per episode)", subtitles = "Four main characters") -> d1
+script_lines_character_df[complete.cases(script_lines_character_df$word_count),] %>% 
+filter(name %in% main_chracters) %>%
+group_by(name, episode_id) %>%
+summarise(nr = sum(word_count)) %>%
+ungroup() %>%
+ggplot(aes(x = episode_id, y = nr, color = name)) +
+geom_line() +
+theme_bw() +
+theme(legend.position = "right") +
+labs(x = "Episode", y = "Words", color = "Character", title = "Character words(per episode)", subtitle = "Four main characters") -> d2
+grid.arrange(d1, d2, ncol = 1)
+```
   
   
   
