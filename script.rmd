@@ -202,25 +202,42 @@ grid.arrange(d1,d2,ncol=1)
 
 Let's see now the frequency of apparition plotted vs. season. We plot the number of lines and the number of words vs. season for top 10 characters.
 ```{r fig.width=10, fig.height=7,character_who_appears_most,warning=FALSE}
-main_characters <- c("Homer Simpson", "Marge Simpson", "Bart Simpson", "Lisa Simpson")
-script_lines_character_df$word_count = as.numeric(script_lines_character_df$word_count)
-script_lines_character_df %>% filter(name %in% main_characters) %>% group_by(name,episode_id) %>%  
-  summarise(nr = length(id)) %>% ungroup() %>%
-ggplot(aes(x = episode_id, y = nr, colour = name)) +  
-  geom_line() + theme_bw() + theme(legend.position="right") +
-  labs(x="Episode", y="Lines", colour="Character", 
-       title="Character lines (per episode)", subtitle="Four main characters") -> d1
-script_lines_character_df[complete.cases(script_lines_character_df$word_count),] %>% filter(name %in% main_characters) %>% group_by(name,episode_id) %>%  
-  summarise(nr = sum(word_count)) %>% ungroup() %>%
-ggplot(aes(x = episode_id, y = nr, colour = name)) +  
-  geom_line() + theme_bw() + theme(legend.position="right") +
-  labs(x="Episode", y="Words", colour="Character", 
-       title="Character words (per episode)", subtitle="Four main characters") -> d2
-grid.arrange(d1,d2,ncol=1)
+script_lines_character_df %>%
+  filter(name != "") %>%
+  group_by(name) %>%
+  summarise(nr = length(id)) %>%
+  top_n(10, nr) -> top10char
+script_lines_ch_ep_df <- merge(script_lines_character_df, episodes_df,  by.x = "episode_id",  by.y = "id")
+script_lines_ch_ep_df %>%
+  filter(name %in% top10char$name) %>%
+  group_by(name, season) %>%
+  
+  summarise(nr = length(id)) %>%
+  ungroup() %>%
+  ggplot(aes(x = season, y = nr, color = name)) +
+  geom_line() +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position = "right") +
+  labs(x = "Season", y = "Lines", color = "Character", title = "Character lines(per season)", substitute = "10 main characters") -> d1
+
+script_lines_ch_ep_df[complete.cases(script_lines_ch_ep_df), ] %>%
+  filter(name %in% top10char$name) %>%
+  group_by(name, season) %>%
+  summarise(nr = sum(word_count)) %>%
+  ungroup() %>%
+  ggplot(aes(x = season, y = nr, color = name)) +
+  geom_line() +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position = "right") +
+  labs(x = "Season", y = "Words", color = "Character", title = "Character words (per season)", subtitle = "10 main characters") -> d2
+grid.arrange(d1, d2, ncol = 1)
 ```
 
+From the other characters than the 4 main characters, `C. Montgomery Burns` had the most important contributions, with 4 times above and close of 250 lines per season. `Bart Simpson` starts on second place in the first 8 seasons, being replaced on the second place by `Marge Simpson` for most of the rest of the seasons. `Homer Simpson` is on the first place for all seasons, with more than double number of lines than the next one character for most of the seasons.
 
-
+Let's see now what is actually the distribution of number of lines and number of words spoken by all the characters,grouped by season.
 
 
 
